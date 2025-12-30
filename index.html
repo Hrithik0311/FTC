@@ -309,6 +309,65 @@
             outline: none;
             border-color: #667eea;
         }
+
+        .file-upload-area {
+            border: 2px dashed #667eea;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            background: #f8f9fa;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 15px;
+        }
+
+        .file-upload-area:hover {
+            background: #e9ecef;
+            border-color: #5568d3;
+        }
+
+        .file-upload-area.dragover {
+            background: #e7f3ff;
+            border-color: #667eea;
+        }
+
+        .file-upload-area i {
+            font-size: 48px;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .upload-text strong {
+            color: #667eea;
+        }
+
+        .selected-file {
+            background: #e7f3ff;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 10px;
+            color: #333;
+        }
+
+        .upload-progress {
+            width: 100%;
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .upload-progress-bar {
+            height: 100%;
+            background: #667eea;
+            transition: width 0.3s;
+        }
     </style>
 </head>
 <body>
@@ -359,14 +418,20 @@
                         <!-- Add File Form -->
                         <div class="add-section">
                             <h3>➕ Add New File</h3>
-                            <div class="form-group">
-                                <label>File Name *</label>
-                                <input type="text" id="newFileName" placeholder="e.g., Robot CAD Model">
+                            
+                            <div class="file-upload-area" id="fileUploadArea" onclick="document.getElementById('fileInput').click()">
+                                <div style="font-size: 48px; margin-bottom: 10px;">📁</div>
+                                <div class="upload-text">
+                                    <strong>Click to upload</strong> or drag and drop
+                                </div>
+                                <div style="font-size: 14px; color: #999;">PDF, Images, Documents, CAD files, etc.</div>
                             </div>
-                            <div class="form-group">
-                                <label>File URL (GitHub Raw URL) *</label>
-                                <input type="text" id="newFileUrl" placeholder="https://raw.githubusercontent.com/Hrithik0311/FTC/main/yourfile.pdf">
+                            <input type="file" id="fileInput" style="display: none;" onchange="handleFileSelect(event)">
+                            <div id="selectedFile" class="selected-file hidden"></div>
+                            <div id="uploadProgress" class="upload-progress hidden">
+                                <div id="uploadProgressBar" class="upload-progress-bar" style="width: 0%"></div>
                             </div>
+                            
                             <div class="form-group">
                                 <label>Description</label>
                                 <input type="text" id="newFileDesc" placeholder="Brief description of the file">
@@ -375,7 +440,7 @@
                                 <label>Category</label>
                                 <input type="text" id="newFileCategory" placeholder="e.g., CAD, Documentation, Photos">
                             </div>
-                            <button class="btn" onclick="addFileToAPI()">Add File</button>
+                            <button class="btn" id="uploadFileBtn" onclick="uploadFile()" disabled>Upload File</button>
                         </div>
                     </div>
                 </div>
@@ -421,7 +486,7 @@
 
     <script>
         // API Configuration - REPLACE WITH YOUR VERCEL URL AFTER DEPLOYMENT
-        const API_URL = 'https://ftc-three.vercel.app/api';
+        const API_URL = 'https://your-project.vercel.app/api';
         
         // Fallback authorized users (for testing before Vercel deployment)
         const FALLBACK_USERS = ['Hrithik0311', 'Tyson', 'Oscar', 'Jeffry', 'Tatum', 'Tim'];
@@ -429,6 +494,7 @@
         let currentUser = '';
         let files = [];
         let links = [];
+        let selectedFile = null;
 
         // Load data from API
         async function loadData() {
@@ -663,22 +729,32 @@
             
             const isReadOnly = API_URL === 'https://your-project.vercel.app/api';
             
-            list.innerHTML = files.map((file, index) => `
-                <li class="file-item">
-                    <div class="item-info">
-                        <div class="item-name">📄 ${file.name || 'Untitled'}</div>
-                        <div class="item-meta">
-                            ${file.description ? file.description + ' • ' : ''}
-                            ${file.category ? 'Category: ' + file.category + ' • ' : ''}
-                            ${file.date ? 'Added: ' + file.date : ''}
+            list.innerHTML = files.map((file, index) => {
+                const fileName = file.name || 'Untitled';
+                const fileDesc = file.description || '';
+                const fileCategory = file.category || '';
+                const fileDate = file.date || '';
+                const fileSize = file.size || '';
+                const fileUrl = file.url || '';
+                
+                return `
+                    <li class="file-item">
+                        <div class="item-info">
+                            <div class="item-name">📄 ${fileName}</div>
+                            <div class="item-meta">
+                                ${fileDesc ? fileDesc + ' • ' : ''}
+                                ${fileCategory ? 'Category: ' + fileCategory + ' • ' : ''}
+                                ${fileSize ? fileSize + ' • ' : ''}
+                                ${fileDate ? 'Added: ' + fileDate : ''}
+                            </div>
                         </div>
-                    </div>
-                    <div class="item-actions">
-                        <a href="${file.url}" download class="small-btn" style="text-decoration: none; display: inline-block;">Download</a>
-                        ${!isReadOnly ? `<button class="small-btn" style="background: #dc3545;" onclick="deleteFile(${index})">Delete</button>` : ''}
-                    </div>
-                </li>
-            `).join('');
+                        <div class="item-actions">
+                            <a href="${fileUrl}" download class="small-btn" style="text-decoration: none; display: inline-block;">Download</a>
+                            ${!isReadOnly ? `<button class="small-btn" style="background: #dc3545;" onclick="deleteFile(${index})">Delete</button>` : ''}
+                        </div>
+                    </li>
+                `;
+            }).join('');
         }
 
         // Render links
@@ -692,24 +768,168 @@
             
             const isReadOnly = API_URL === 'https://your-project.vercel.app/api';
             
-            list.innerHTML = links.map((link, index) => `
-                <li class="link-item">
-                    <div class="item-info">
-                        <div class="item-name">🔗 ${link.name || 'Untitled'}</div>
-                        <div class="item-meta">
-                            ${link.description ? link.description + ' • ' : ''}
-                            ${link.category ? 'Category: ' + link.category : ''}
+            list.innerHTML = links.map((link, index) => {
+                const linkName = link.name || 'Untitled';
+                const linkDesc = link.description || '';
+                const linkCategory = link.category || '';
+                const linkUrl = link.url || '';
+                
+                return `
+                    <li class="link-item">
+                        <div class="item-info">
+                            <div class="item-name">🔗 ${linkName}</div>
+                            <div class="item-meta">
+                                ${linkDesc ? linkDesc + ' • ' : ''}
+                                ${linkCategory ? 'Category: ' + linkCategory : ''}
+                            </div>
                         </div>
-                    </div>
-                    <div class="item-actions">
-                        <button class="small-btn" onclick="window.open('${link.url}', '_blank')">Open</button>
-                        ${!isReadOnly ? `<button class="small-btn" style="background: #dc3545;" onclick="deleteLink(${index})">Delete</button>` : ''}
-                    </div>
-                </li>
-            `).join('');
+                        <div class="item-actions">
+                            <button class="small-btn" onclick="window.open('${linkUrl}', '_blank')">Open</button>
+                            ${!isReadOnly ? `<button class="small-btn" style="background: #dc3545;" onclick="deleteLink(${index})">Delete</button>` : ''}
+                        </div>
+                    </li>
+                `;
+            }).join('');
         }
 
-        // Add file via API
+        // File upload handlers
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                selectedFile = file;
+                document.getElementById('selectedFile').textContent = `Selected: ${file.name} (${formatFileSize(file.size)})`;
+                document.getElementById('selectedFile').classList.remove('hidden');
+                document.getElementById('uploadFileBtn').disabled = false;
+            }
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+
+        // Drag and drop handlers
+        const uploadArea = document.getElementById('fileUploadArea');
+        
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, () => {
+                uploadArea.classList.add('dragover');
+            }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, () => {
+                uploadArea.classList.remove('dragover');
+            }, false);
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const file = dt.files[0];
+            if (file) {
+                selectedFile = file;
+                document.getElementById('selectedFile').textContent = `Selected: ${file.name} (${formatFileSize(file.size)})`;
+                document.getElementById('selectedFile').classList.remove('hidden');
+                document.getElementById('uploadFileBtn').disabled = false;
+            }
+        });
+
+        // Upload file to GitHub via API
+        async function uploadFile() {
+            if (!selectedFile) {
+                alert('Please select a file first');
+                return;
+            }
+
+            if (API_URL === 'https://your-project.vercel.app/api') {
+                alert('⚠️ Backend not configured. Please deploy to Vercel first to enable file uploads.');
+                return;
+            }
+
+            const description = document.getElementById('newFileDesc').value.trim();
+            const category = document.getElementById('newFileCategory').value.trim();
+
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+
+            const progressBar = document.getElementById('uploadProgressBar');
+            const progressContainer = document.getElementById('uploadProgress');
+            progressContainer.classList.remove('hidden');
+            progressBar.style.width = '30%';
+
+            try {
+                // Upload file to GitHub
+                const uploadResponse = await fetch(`${API_URL}/files/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!uploadResponse.ok) {
+                    throw new Error('Failed to upload file to GitHub');
+                }
+
+                const uploadData = await uploadResponse.json();
+                progressBar.style.width = '60%';
+
+                // Add file metadata to files.json
+                const fileEntry = {
+                    name: selectedFile.name,
+                    url: uploadData.url,
+                    description: description || '',
+                    category: category || '',
+                    date: new Date().toISOString().split('T')[0],
+                    size: formatFileSize(selectedFile.size)
+                };
+
+                const addResponse = await fetch(`${API_URL}/files`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(fileEntry)
+                });
+
+                if (addResponse.ok) {
+                    progressBar.style.width = '100%';
+                    alert('File uploaded successfully!');
+                    
+                    // Reset form
+                    selectedFile = null;
+                    document.getElementById('fileInput').value = '';
+                    document.getElementById('selectedFile').classList.add('hidden');
+                    document.getElementById('newFileDesc').value = '';
+                    document.getElementById('newFileCategory').value = '';
+                    document.getElementById('uploadFileBtn').disabled = true;
+                    
+                    setTimeout(() => {
+                        progressContainer.classList.add('hidden');
+                        progressBar.style.width = '0%';
+                    }, 1000);
+                    
+                    await loadFiles();
+                } else {
+                    throw new Error('Failed to add file metadata');
+                }
+            } catch (error) {
+                progressContainer.classList.add('hidden');
+                progressBar.style.width = '0%';
+                alert('Error uploading file: ' + error.message);
+            }
+        }
+
+        // Add file via API (old method - kept for compatibility)
         async function addFileToAPI() {
             const name = document.getElementById('newFileName').value.trim();
             const url = document.getElementById('newFileUrl').value.trim();
