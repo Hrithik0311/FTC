@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Robotics Team Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 1200px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .login-screen, .main-content {
+            padding: 40px;
+        }
+
+        .login-screen {
+            text-align: center;
+        }
+
+        .login-screen h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .login-screen p {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .login-form {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1.8em;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 20px;
+            border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .main-content {
+            padding: 30px 40px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 16px;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .file-list, .link-list {
+            list-style: none;
+        }
+
+        .file-item, .link-item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .file-item:hover, .link-item:hover {
+            background: #e9ecef;
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .item-meta {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .small-btn {
+            padding: 6px 15px;
+            font-size: 14px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .small-btn:hover {
+            background: #5568d3;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .info-box {
+            background: #e7f3ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+            font-size: 18px;
+        }
+
+        .error-box {
+            background: #ffe7e7;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            color: #721c24;
+        }
+
+        .refresh-btn {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            border: 2px solid #667eea;
+            padding: 8px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .refresh-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Login Screen -->
+        <div id="loginScreen" class="login-screen">
+            <h1>🤖 FTC Robotics Team Portal</h1>
+            <p>Welcome! Please log in to access team resources</p>
+            
+            <div class="login-form">
+                <div class="input-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" placeholder="Enter your username">
+                </div>
+                <button class="btn" onclick="login()">Login</button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div id="mainContent" class="hidden">
+            <div class="header">
+                <h1>🤖 FTC Robotics Team Portal</h1>
+                <div class="user-info">
+                    <span>Welcome, <strong id="currentUser"></strong></span>
+                    <button class="btn refresh-btn" onclick="refreshData()">🔄 Refresh</button>
+                    <button class="btn logout-btn" onclick="logout()">Logout</button>
+                </div>
+            </div>
+
+            <div class="main-content">
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab('files')">Files</button>
+                    <button class="tab" onclick="switchTab('links')">Links</button>
+                </div>
+
+                <!-- Files Tab -->
+                <div id="filesTab" class="tab-content active">
+                    <div class="section">
+                        <h2>Team Files</h2>
+                        <div class="info-box">
+                            <strong>📁 Files from GitHub Repository</strong><br>
+                            Files are automatically loaded from: <code>Hrithik0311/FTC/main/files.json</code>
+                        </div>
+                        <div id="filesLoading" class="loading">Loading files...</div>
+                        <div id="filesError" class="error-box hidden"></div>
+                        <ul id="fileList" class="file-list"></ul>
+                    </div>
+                </div>
+
+                <!-- Links Tab -->
+                <div id="linksTab" class="tab-content">
+                    <div class="section">
+                        <h2>Important Links</h2>
+                        <div class="info-box">
+                            <strong>🔗 Links from GitHub Repository</strong><br>
+                            Links are automatically loaded from: <code>Hrithik0311/FTC/main/links.json</code>
+                        </div>
+                        <div id="linksLoading" class="loading">Loading links...</div>
+                        <div id="linksError" class="error-box hidden"></div>
+                        <ul id="linkList" class="link-list"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const GITHUB_USER = 'Hrithik0311';
+        const GITHUB_REPO = 'FTC';
+        const GITHUB_BRANCH = 'main';
+        const FILES_JSON_URL = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/files.json`;
+        const LINKS_JSON_URL = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/links.json`;
+
+        // Authorized users list
+        const AUTHORIZED_USERS = ['Hrithik0311', 'Tyson', 'Oscar', 'Jeffry', 'Tatum', 'Tim'];
+
+        let currentUser = '';
+        let files = [];
+        let links = [];
+
+        // Load data from GitHub
+        async function loadData() {
+            await loadFiles();
+            await loadLinks();
+        }
+
+        // Load files from GitHub
+        async function loadFiles() {
+            const loadingEl = document.getElementById('filesLoading');
+            const errorEl = document.getElementById('filesError');
+            const listEl = document.getElementById('fileList');
+
+            loadingEl.classList.remove('hidden');
+            errorEl.classList.add('hidden');
+            listEl.innerHTML = '';
+
+            try {
+                const response = await fetch(FILES_JSON_URL);
+                if (!response.ok) {
+                    throw new Error(`Failed to load files (${response.status})`);
+                }
+                files = await response.json();
+                loadingEl.classList.add('hidden');
+                renderFiles();
+            } catch (error) {
+                loadingEl.classList.add('hidden');
+                errorEl.classList.remove('hidden');
+                errorEl.innerHTML = `
+                    <strong>⚠️ Error loading files:</strong> ${error.message}<br>
+                    <small>Make sure <code>files.json</code> exists in your repository at: ${FILES_JSON_URL}</small>
+                `;
+                listEl.innerHTML = '<li class="empty-state">Unable to load files. Check the error above.</li>';
+            }
+        }
+
+        // Load links from GitHub
+        async function loadLinks() {
+            const loadingEl = document.getElementById('linksLoading');
+            const errorEl = document.getElementById('linksError');
+            const listEl = document.getElementById('linkList');
+
+            loadingEl.classList.remove('hidden');
+            errorEl.classList.add('hidden');
+            listEl.innerHTML = '';
+
+            try {
+                const response = await fetch(LINKS_JSON_URL);
+                if (!response.ok) {
+                    throw new Error(`Failed to load links (${response.status})`);
+                }
+                links = await response.json();
+                loadingEl.classList.add('hidden');
+                renderLinks();
+            } catch (error) {
+                loadingEl.classList.add('hidden');
+                errorEl.classList.remove('hidden');
+                errorEl.innerHTML = `
+                    <strong>⚠️ Error loading links:</strong> ${error.message}<br>
+                    <small>Make sure <code>links.json</code> exists in your repository at: ${LINKS_JSON_URL}</small>
+                `;
+                listEl.innerHTML = '<li class="empty-state">Unable to load links. Check the error above.</li>';
+            }
+        }
+
+        // Refresh data
+        async function refreshData() {
+            await loadData();
+        }
+
+        // Login function
+        function login() {
+            const username = document.getElementById('username').value.trim();
+            if (!username) {
+                alert('Please enter a username');
+                return;
+            }
+            
+            // Check if user is authorized
+            if (!AUTHORIZED_USERS.includes(username)) {
+                alert('User not found. Access denied.');
+                document.getElementById('username').value = '';
+                return;
+            }
+            
+            currentUser = username;
+            document.getElementById('currentUser').textContent = username;
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('mainContent').classList.remove('hidden');
+            loadData();
+        }
+
+        // Logout function
+        function logout() {
+            currentUser = '';
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('mainContent').classList.add('hidden');
+            document.getElementById('username').value = '';
+        }
+
+        // Tab switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName + 'Tab').classList.add('active');
+        }
+
+        // Render files
+        function renderFiles() {
+            const list = document.getElementById('fileList');
+            
+            if (!files || files.length === 0) {
+                list.innerHTML = '<li class="empty-state">No files found in files.json</li>';
+                return;
+            }
+            
+            list.innerHTML = files.map(file => `
+                <li class="file-item">
+                    <div class="item-info">
+                        <div class="item-name">📄 ${file.name || 'Untitled'}</div>
+                        <div class="item-meta">
+                            ${file.description ? file.description + ' • ' : ''}
+                            ${file.category ? 'Category: ' + file.category + ' • ' : ''}
+                            ${file.date ? 'Added: ' + file.date : ''}
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="small-btn" onclick="window.open('${file.url}', '_blank')">View</button>
+                        ${file.downloadUrl ? `<button class="small-btn" onclick="window.open('${file.downloadUrl}', '_blank')">Download</button>` : ''}
+                    </div>
+                </li>
+            `).join('');
+        }
+
+        // Render links
+        function renderLinks() {
+            const list = document.getElementById('linkList');
+            
+            if (!links || links.length === 0) {
+                list.innerHTML = '<li class="empty-state">No links found in links.json</li>';
+                return;
+            }
+            
+            list.innerHTML = links.map(link => `
+                <li class="link-item">
+                    <div class="item-info">
+                        <div class="item-name">🔗 ${link.name || 'Untitled'}</div>
+                        <div class="item-meta">
+                            ${link.description ? link.description + ' • ' : ''}
+                            ${link.category ? 'Category: ' + link.category : ''}
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="small-btn" onclick="window.open('${link.url}', '_blank')">Open</button>
+                    </div>
+                </li>
+            `).join('');
+        }
+    </script>
+</body>
+</html>
