@@ -1,1 +1,8 @@
-[]
+[
+  {
+    "name": "test",
+    "url": "https://test.txt",
+    "description": "testing",
+    "category": "test"
+  }
+]
