@@ -1,0 +1,16 @@
+[
+  {
+    "name": "Robot CAD Model",
+    "description": "2024 Season Robot Design",
+    "category": "CAD",
+    "url": "https://raw.githubusercontent.com/Hrithik0311/FTC/main/robot-design.pdf",
+    "date": "2024-01-15"
+  },
+  {
+    "name": "Team Notebook",
+    "description": "Engineering notebook entries",
+    "category": "Documentation",
+    "url": "https://raw.githubusercontent.com/Hrithik0311/FTC/main/notebook.pdf",
+    "date": "2024-02-20"
+  }
+]
