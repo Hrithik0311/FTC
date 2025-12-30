@@ -1,14 +1,1 @@
-[
-  {
-    "name": "FIRST Tech Challenge",
-    "description": "Official FTC website",
-    "category": "Official",
-    "url": "https://www.firstinspires.org/robotics/ftc"
-  },
-  {
-    "name": "Team Drive",
-    "description": "Shared Google Drive folder",
-    "category": "Team Resources",
-    "url": "https://drive.google.com/your-folder-link"
-  }
-]
+[]
