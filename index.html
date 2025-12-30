@@ -463,10 +463,7 @@
 
     <script>
         // API Configuration - REPLACE WITH YOUR VERCEL URL AFTER DEPLOYMENT
-        const API_URL = 'https://ftc-three.vercel.app/api';
-
-        // Authorized users list
-        const AUTHORIZED_USERS = ['Hrithik0311', 'Tyson', 'Oscar', 'Jeffry', 'Tatum', 'Tim'];
+        const API_URL = 'https://your-project.vercel.app/api';
 
         let currentUser = '';
         let files = [];
@@ -542,25 +539,40 @@
         }
 
         // Login function
-        function login() {
+        async function login() {
             const username = document.getElementById('username').value.trim();
             if (!username) {
                 alert('Please enter a username');
                 return;
             }
             
-            // Check if user is authorized
-            if (!AUTHORIZED_USERS.includes(username)) {
-                alert('User not found. Access denied.');
-                document.getElementById('username').value = '';
-                return;
+            try {
+                // Check authorization with backend
+                const response = await fetch(`${API_URL}/auth/check`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username: username })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.authorized) {
+                        currentUser = username;
+                        document.getElementById('currentUser').textContent = username;
+                        document.getElementById('loginScreen').classList.add('hidden');
+                        document.getElementById('mainContent').classList.remove('hidden');
+                        loadData();
+                    }
+                } else {
+                    alert('User not found. Access denied.');
+                    document.getElementById('username').value = '';
+                }
+            } catch (error) {
+                alert('Error connecting to server. Please try again.');
+                console.error('Login error:', error);
             }
-            
-            currentUser = username;
-            document.getElementById('currentUser').textContent = username;
-            document.getElementById('loginScreen').classList.add('hidden');
-            document.getElementById('mainContent').classList.remove('hidden');
-            loadData();
         }
 
         // Logout function
