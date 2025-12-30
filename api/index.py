@@ -14,6 +14,9 @@ GITHUB_USER = 'Hrithik0311'
 GITHUB_REPO = 'FTC'
 GITHUB_BRANCH = 'main'
 
+# Get authorized users from environment variable
+AUTHORIZED_USERS = os.environ.get('AUTHORIZED_USERS', '').split(',')
+
 def get_file_sha(filepath):
     """Get the SHA of a file from GitHub (needed for updates)"""
     url = f"https://api.github.com/repos/{GITHUB_USER}/{GITHUB_REPO}/contents/{filepath}"
@@ -50,6 +53,16 @@ def update_github_file(filepath, content, message):
     
     response = requests.put(url, headers=headers, json=data)
     return response.json(), response.status_code
+
+@app.route('/api/auth/check', methods=['POST'])
+def check_auth():
+    """Check if a username is authorized"""
+    data = request.json
+    username = data.get('username', '')
+    
+    if username in AUTHORIZED_USERS:
+        return jsonify({'authorized': True, 'username': username})
+    return jsonify({'authorized': False}), 403
 
 @app.route('/api/files', methods=['GET'])
 def get_files():
