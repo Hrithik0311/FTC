@@ -82,6 +82,51 @@ def get_links():
         return jsonify(response.json())
     return jsonify([]), 404
 
+@app.route('/api/files/upload', methods=['POST'])
+def upload_file():
+    """Upload a file to GitHub"""
+    if not GITHUB_TOKEN:
+        return jsonify({'error': 'GitHub token not configured'}), 500
+    
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file provided'}), 400
+    
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'error': 'No file selected'}), 400
+    
+    # Read file content
+    file_content = file.read()
+    file_base64 = base64.b64encode(file_content).decode('utf-8')
+    
+    # Upload to GitHub
+    filename = file.filename
+    filepath = f'uploads/{filename}'
+    url = f"https://api.github.com/repos/{GITHUB_USER}/{GITHUB_REPO}/contents/{filepath}"
+    headers = {
+        'Authorization': f'token {GITHUB_TOKEN}',
+        'Accept': 'application/vnd.github.v3+json'
+    }
+    
+    data = {
+        'message': f'Upload file: {filename}',
+        'content': file_base64,
+        'branch': GITHUB_BRANCH
+    }
+    
+    response = requests.put(url, headers=headers, json=data)
+    
+    if response.status_code in [200, 201]:
+        result = response.json()
+        download_url = result['content']['download_url']
+        return jsonify({
+            'success': True,
+            'url': download_url,
+            'filename': filename
+        })
+    else:
+        return jsonify({'error': 'Failed to upload file to GitHub'}), response.status_code
+
 @app.route('/api/files', methods=['POST'])
 def add_file():
     """Add a new file to files.json"""
