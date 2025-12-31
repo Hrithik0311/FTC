@@ -3,109 +3,899 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Team Portal | FTC Robotics</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Robotics Team Portal</title>
     <style>
-        .portal-container { max-width: 800px; margin: 40px auto; padding: 20px; }
-        .item-card {
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --accent-color: #00d2ff;
+            --secondary-accent: #9d50bb;
+            --text-color: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: radial-gradient(circle at top right, #1e2a44, #0f172a);
+            background-attachment: fixed;
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Fixed Navigation Bar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 70px;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 40px;
+            z-index: 1000;
+        }
+
+        .nav-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(to right, var(--accent-color), #3a7bd5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        /* Glass Cards */
+        .container {
+            margin-top: 100px;
+            width: 95%;
+            max-width: 1000px;
+            padding-bottom: 50px;
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            margin-bottom: 30px;
+        }
+
+        .login-screen {
+            max-width: 450px;
+            margin: 150px auto;
+            text-align: center;
+        }
+
+        /* Tabs Navigation */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 8px;
+            border-radius: 15px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            color: rgba(255,255,255,0.6);
+            border-radius: 10px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .tab.active {
+            background: var(--accent-color);
+            color: #0f172a;
+            box-shadow: 0 4px 15px rgba(0, 210, 255, 0.3);
+        }
+
+        /* Buttons & Inputs */
+        .btn {
+            background: linear-gradient(135deg, var(--accent-color), #3a7bd5);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 210, 255, 0.4);
+        }
+
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .logout-btn { background: rgba(255, 75, 43, 0.2); border: 1px solid rgba(255, 75, 43, 0.4); }
+        .refresh-btn { background: rgba(0, 210, 255, 0.1); border: 1px solid var(--accent-color); color: var(--accent-color); }
+
+        input {
+            width: 100%;
+            padding: 12px;
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--glass-border);
-            padding: 15px;
             border-radius: 10px;
+            color: white;
+            margin-top: 8px;
+            margin-bottom: 15px;
+        }
+
+        input:focus { outline: none; border-color: var(--accent-color); background: rgba(255, 255, 255, 0.1); }
+
+        /* List Items */
+        .file-item, .link-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
             margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        .delete-btn { color: #ff4d4d; cursor: pointer; background: none; border: none; font-weight: bold; }
+
+        .file-upload-area {
+            border: 2px dashed var(--glass-border);
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            background: rgba(255,255,255,0.02);
+        }
+
+        .file-upload-area:hover { border-color: var(--accent-color); background: rgba(255,255,255,0.05); }
+
+        .info-box { background: rgba(0, 210, 255, 0.1); border-left: 4px solid var(--accent-color); padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; }
+
         .hidden { display: none; }
-        input[type="text"] { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: white; }
     </style>
 </head>
 <body>
-    <nav>
-        <a href="index.html">Home</a>
-        <a href="team.html">Our Team</a>
-        <a href="index2.html" class="active">Team Portal</a>
+
+    <nav class="navbar hidden" id="mainNav">
+        <div class="nav-brand">🤖 FTC PORTAL</div>
+        <div class="nav-actions">
+            <span>Welcome, <strong id="currentUserNav">User</strong></span>
+            <button class="btn refresh-btn" onclick="refreshData()" style="padding: 8px 15px;">🔄 Refresh</button>
+            <button class="btn logout-btn" onclick="logout()" style="padding: 8px 15px;">Logout</button>
+        </div>
     </nav>
 
-    <div class="portal-container">
-        <div id="authSection" class="glass-panel text-center">
-            <h2 class="gradient-text">Member Login</h2>
-            <input type="text" id="username" placeholder="Enter Username">
-            <button class="btn-gradient" onclick="login()" style="border:none; width: 100%;">Access Portal</button>
+    <div class="container">
+        <div id="loginScreen" class="glass-card login-screen">
+            <h1 style="margin-bottom: 10px;">🤖 FTC Robotics</h1>
+            <p style="opacity: 0.7; margin-bottom: 30px;">Please log in to access team resources</p>
+            
+            <div class="login-form">
+                <div style="text-align: left;">
+                    <label style="font-weight: 600; font-size: 14px;">Username</label>
+                    <input type="text" id="username" placeholder="Enter your team username">
+                </div>
+                <button class="btn" onclick="login()" style="width: 100%; margin-top: 10px;">Login to Portal</button>
+            </div>
         </div>
 
-        <div id="dashboard" class="hidden">
-            <div class="glass-panel">
-                <h2 class="gradient-text">Resource Manager</h2>
-                <div id="fileList"></div>
-                
-                <hr style="border: 0; border-top: 1px solid var(--glass-border); margin: 20px 0;">
-                
-                <h3>Upload New Resource</h3>
-                <input type="file" id="filePicker" style="margin-bottom: 10px;">
-                <button class="btn-gradient" onclick="uploadFile()" style="border:none;">Upload to GitHub</button>
+        <div id="mainContent" class="hidden">
+            <div class="tabs">
+                <button id="tab-files" class="tab active" onclick="switchTab('files')">📁 Files</button>
+                <button id="tab-links" class="tab" onclick="switchTab('links')">🔗 Links</button>
+            </div>
+
+            <div id="filesTab" class="tab-content active">
+                <div class="glass-card">
+                    <h2 style="margin-bottom: 20px;">Team Files</h2>
+                    <div class="info-box">
+                        <strong>Repository Storage</strong><br>
+                        Path: <code>Hrithik0311/FTC/main/files.json</code>
+                    </div>
+                    
+                    <div id="filesLoading" class="hidden">Loading files...</div>
+                    <ul id="fileList"></ul>
+
+                    <div class="glass-card" style="margin-top: 30px; background: rgba(255,255,255,0.02);">
+                        <h3 style="margin-bottom: 15px;">➕ Add New File</h3>
+                        <div class="file-upload-area" id="fileUploadArea" onclick="document.getElementById('fileInput').click()">
+                            <div style="font-size: 40px; margin-bottom: 10px;">☁️</div>
+                            <div class="upload-text"><strong>Click to upload</strong> or drag and drop</div>
+                            <div style="font-size: 12px; opacity: 0.5;">CAD, Documentation, Images</div>
+                        </div>
+                        <input type="file" id="fileInput" class="hidden" onchange="handleFileSelect(event)">
+                        
+                        <div id="selectedFile" class="hidden" style="margin: 15px 0; padding: 10px; background: rgba(0,210,255,0.1); border-radius: 8px;"></div>
+                        
+                        <div id="uploadProgress" class="hidden" style="height: 5px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-bottom: 15px;">
+                            <div id="uploadProgressBar" style="height: 100%; background: var(--accent-color); width: 0%; transition: 0.3s;"></div>
+                        </div>
+
+                        <input type="text" id="newFileDesc" placeholder="File Description">
+                        <input type="text" id="newFileCategory" placeholder="Category (e.g. Mechanical, Code)">
+                        <button class="btn" id="uploadFileBtn" onclick="uploadFile()" disabled style="width: 100%;">Upload to GitHub</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="linksTab" class="tab-content">
+                <div class="glass-card">
+                    <h2 style="margin-bottom: 20px;">Important Links</h2>
+                    <div id="linksLoading" class="hidden">Loading links...</div>
+                    <ul id="linkList"></ul>
+
+                    <div class="glass-card" style="margin-top: 30px; background: rgba(255,255,255,0.02);">
+                        <h3 style="margin-bottom: 15px;">➕ Add New Link</h3>
+                        <input type="text" id="newLinkName" placeholder="Link Name (e.g. Technical Manual)">
+                        <input type="text" id="newLinkUrl" placeholder="https://...">
+                        <input type="text" id="newLinkDesc" placeholder="Brief Description">
+                        <input type="text" id="newLinkCategory" placeholder="Category">
+                        <button class="btn" onclick="addLinkToAPI()" style="width: 100%;">Save Link</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+   <script>
+        // API Configuration - REPLACE WITH YOUR VERCEL URL AFTER DEPLOYMENT
+        const API_URL = 'https://ftc-three.vercel.app/api';
+        
+        // Fallback authorized users (for testing before Vercel deployment)
+        const FALLBACK_USERS = ['Hrithik0311', 'Tyson', 'Oscar', 'Jeffry', 'Tatum', 'Tim'];
 
-    <script>
-        // Since api/index.py is in the api folder, Vercel routes it to /api
-        const API_BASE = '/api'; 
+        let currentUser = '';
+        let files = [];
+        let links = [];
+        let selectedFile = null;
 
+        // Load data from API
+        async function loadData() {
+            await loadFiles();
+            await loadLinks();
+        }
+
+        // Load files from API
+        async function loadFiles() {
+            const loadingEl = document.getElementById('filesLoading');
+            const errorEl = document.getElementById('filesError');
+            const listEl = document.getElementById('fileList');
+
+            loadingEl.classList.remove('hidden');
+            errorEl.classList.add('hidden');
+            listEl.innerHTML = '';
+
+            try {
+                // Add cache buster to force fresh data
+                const cacheBuster = `?cb=${Date.now()}`;
+                const response = await fetch(`${API_URL}/files${cacheBuster}`);
+                if (!response.ok) {
+                    throw new Error(`Failed to load files (${response.status})`);
+                }
+                files = await response.json();
+                loadingEl.classList.add('hidden');
+                renderFiles();
+            } catch (error) {
+                loadingEl.classList.add('hidden');
+                errorEl.classList.remove('hidden');
+                errorEl.innerHTML = `
+                    <strong>⚠️ Error loading files:</strong> ${error.message}<br>
+                    <small>Make sure your backend is deployed and the API_URL is configured correctly.</small>
+                `;
+                listEl.innerHTML = '<li class="empty-state">Unable to load files. Check the error above.</li>';
+            }
+        }
+
+        // Load links from API
+        async function loadLinks() {
+            const loadingEl = document.getElementById('linksLoading');
+            const errorEl = document.getElementById('linksError');
+            const listEl = document.getElementById('linkList');
+
+            loadingEl.classList.remove('hidden');
+            errorEl.classList.add('hidden');
+            listEl.innerHTML = '';
+
+            try {
+                // Add cache buster to force fresh data
+                const cacheBuster = `?cb=${Date.now()}`;
+                const response = await fetch(`${API_URL}/links${cacheBuster}`);
+                if (!response.ok) {
+                    throw new Error(`Failed to load links (${response.status})`);
+                }
+                links = await response.json();
+                loadingEl.classList.add('hidden');
+                renderLinks();
+            } catch (error) {
+                loadingEl.classList.add('hidden');
+                errorEl.classList.remove('hidden');
+                errorEl.innerHTML = `
+                    <strong>⚠️ Error loading links:</strong> ${error.message}<br>
+                    <small>Make sure your backend is deployed and the API_URL is configured correctly.</small>
+                `;
+                listEl.innerHTML = '<li class="empty-state">Unable to load links. Check the error above.</li>';
+            }
+        }
+
+        // Refresh data
+        async function refreshData() {
+            if (API_URL === 'https://your-project.vercel.app/api') {
+                await loadDataFallback();
+            } else {
+                await loadData();
+            }
+        }
+
+        // Login function
         async function login() {
-            const username = document.getElementById('username').value;
-            const res = await fetch(`${API_BASE}/auth/check`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({username})
-            });
-            if (res.ok) {
-                document.getElementById('authSection').classList.add('hidden');
-                document.getElementById('dashboard').classList.remove('hidden');
-                loadResources();
-            } else { alert("Access Denied"); }
+            const username = document.getElementById('username').value.trim();
+            if (!username) {
+                alert('Please enter a username');
+                return;
+            }
+            
+            // Check if API_URL is configured
+            if (API_URL === 'https://your-project.vercel.app/api') {
+                // Fallback to client-side checking if API not configured yet
+                console.warn('API not configured yet, using fallback authentication');
+                if (FALLBACK_USERS.includes(username)) {
+                    currentUser = username;
+                    document.getElementById('currentUser').textContent = username;
+                    document.getElementById('loginScreen').classList.add('hidden');
+                    document.getElementById('mainContent').classList.remove('hidden');
+                    alert('⚠️ Using fallback mode. Files/links will load from GitHub directly (read-only). Deploy backend to enable full features.');
+                    loadDataFallback();
+                } else {
+                    alert('User not found. Access denied.');
+                    document.getElementById('username').value = '';
+                }
+                return;
+            }
+            
+            try {
+                // Check authorization with backend
+                const response = await fetch(`${API_URL}/auth/check`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username: username })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.authorized) {
+                        currentUser = username;
+                        document.getElementById('currentUser').textContent = username;
+                        document.getElementById('loginScreen').classList.add('hidden');
+                        document.getElementById('mainContent').classList.remove('hidden');
+                        loadData();
+                    }
+                } else {
+                    alert('User not found. Access denied.');
+                    document.getElementById('username').value = '';
+                }
+            } catch (error) {
+                alert('Error connecting to server. Trying fallback mode...');
+                console.error('Login error:', error);
+                
+                // Fallback to client-side checking
+                if (FALLBACK_USERS.includes(username)) {
+                    currentUser = username;
+                    document.getElementById('currentUser').textContent = username;
+                    document.getElementById('loginScreen').classList.add('hidden');
+                    document.getElementById('mainContent').classList.remove('hidden');
+                    alert('⚠️ Backend unavailable. Using read-only mode from GitHub.');
+                    loadDataFallback();
+                } else {
+                    alert('User not found. Access denied.');
+                    document.getElementById('username').value = '';
+                }
+            }
         }
 
-        async function loadResources() {
-            const res = await fetch(`${API_BASE}/files`);
-            const files = await res.json();
-            const container = document.getElementById('fileList');
-            container.innerHTML = files.map((f, i) => `
-                <div class="item-card">
-                    <span>📄 ${f.name}</span>
-                    <button class="delete-btn" onclick="deleteResource(${i})">Remove</button>
-                </div>
-            `).join('');
+        // Fallback data loading (directly from GitHub, read-only)
+        async function loadDataFallback() {
+            await loadFilesFallback();
+            await loadLinksFallback();
         }
 
+        async function loadFilesFallback() {
+            const loadingEl = document.getElementById('filesLoading');
+            const errorEl = document.getElementById('filesError');
+            const listEl = document.getElementById('fileList');
+
+            loadingEl.classList.remove('hidden');
+            errorEl.classList.add('hidden');
+            listEl.innerHTML = '';
+
+            try {
+                const response = await fetch('https://raw.githubusercontent.com/Hrithik0311/FTC/main/files.json');
+                if (!response.ok) throw new Error('Failed to load files');
+                files = await response.json();
+                loadingEl.classList.add('hidden');
+                renderFiles();
+                
+                // Show warning about read-only mode
+                errorEl.classList.remove('hidden');
+                errorEl.innerHTML = '<strong>⚠️ Read-only mode:</strong> Deploy the backend to Vercel to enable adding/deleting files.';
+                errorEl.style.background = '#fff3cd';
+                errorEl.style.borderLeft = '4px solid #ffc107';
+            } catch (error) {
+                loadingEl.classList.add('hidden');
+                errorEl.classList.remove('hidden');
+                errorEl.innerHTML = `<strong>⚠️ Error loading files:</strong> ${error.message}`;
+                listEl.innerHTML = '<li class="empty-state">Unable to load files.</li>';
+            }
+        }
+
+        async function loadLinksFallback() {
+            const loadingEl = document.getElementById('linksLoading');
+            const errorEl = document.getElementById('linksError');
+            const listEl = document.getElementById('linkList');
+
+            loadingEl.classList.remove('hidden');
+            errorEl.classList.add('hidden');
+            listEl.innerHTML = '';
+
+            try {
+                const response = await fetch('https://raw.githubusercontent.com/Hrithik0311/FTC/main/links.json');
+                if (!response.ok) throw new Error('Failed to load links');
+                links = await response.json();
+                loadingEl.classList.add('hidden');
+                renderLinks();
+                
+                // Show warning about read-only mode
+                errorEl.classList.remove('hidden');
+                errorEl.innerHTML = '<strong>⚠️ Read-only mode:</strong> Deploy the backend to Vercel to enable adding/deleting links.';
+                errorEl.style.background = '#fff3cd';
+                errorEl.style.borderLeft = '4px solid #ffc107';
+            } catch (error) {
+                loadingEl.classList.add('hidden');
+                errorEl.classList.remove('hidden');
+                errorEl.innerHTML = `<strong>⚠️ Error loading links:</strong> ${error.message}`;
+                listEl.innerHTML = '<li class="empty-state">Unable to load links.</li>';
+            }
+        }
+
+        // Logout function
+        function logout() {
+            currentUser = '';
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('mainContent').classList.add('hidden');
+            document.getElementById('username').value = '';
+        }
+
+        // Tab switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName + 'Tab').classList.add('active');
+        }
+
+        // Render files
+        function renderFiles() {
+            const list = document.getElementById('fileList');
+            
+            if (!files || files.length === 0) {
+                list.innerHTML = '<li class="empty-state">No files found. Add one below!</li>';
+                return;
+            }
+            
+            const isReadOnly = API_URL === 'https://your-project.vercel.app/api';
+            
+            list.innerHTML = files.map((file, index) => {
+                const fileName = file.name || 'Untitled';
+                const fileDesc = file.description || '';
+                const fileCategory = file.category || '';
+                const fileDate = file.date || '';
+                const fileSize = file.size || '';
+                const fileUrl = file.url || '';
+                
+                return `
+                    <li class="file-item">
+                        <div class="item-info">
+                            <div class="item-name">📄 ${fileName}</div>
+                            <div class="item-meta">
+                                ${fileDesc ? fileDesc + ' • ' : ''}
+                                ${fileCategory ? 'Category: ' + fileCategory + ' • ' : ''}
+                                ${fileSize ? fileSize + ' • ' : ''}
+                                ${fileDate ? 'Added: ' + fileDate : ''}
+                            </div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="small-btn" onclick="downloadFile('${fileUrl}', '${fileName}')">Download</button>
+                            ${!isReadOnly ? `<button class="small-btn" style="background: #dc3545;" onclick="deleteFile(${index})">Delete</button>` : ''}
+                        </div>
+                    </li>
+                `;
+            }).join('');
+        }
+
+        // Render links
+        function renderLinks() {
+            const list = document.getElementById('linkList');
+            
+            if (!links || links.length === 0) {
+                list.innerHTML = '<li class="empty-state">No links found. Add one below!</li>';
+                return;
+            }
+            
+            const isReadOnly = API_URL === 'https://your-project.vercel.app/api';
+            
+            list.innerHTML = links.map((link, index) => {
+                const linkName = link.name || 'Untitled';
+                const linkDesc = link.description || '';
+                const linkCategory = link.category || '';
+                const linkUrl = link.url || '';
+                
+                return `
+                    <li class="link-item">
+                        <div class="item-info">
+                            <div class="item-name">🔗 ${linkName}</div>
+                            <div class="item-meta">
+                                ${linkDesc ? linkDesc + ' • ' : ''}
+                                ${linkCategory ? 'Category: ' + linkCategory : ''}
+                            </div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="small-btn" onclick="window.open('${linkUrl}', '_blank')">Open</button>
+                            ${!isReadOnly ? `<button class="small-btn" style="background: #dc3545;" onclick="deleteLink(${index})">Delete</button>` : ''}
+                        </div>
+                    </li>
+                `;
+            }).join('');
+        }
+
+        // File upload handlers
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                selectedFile = file;
+                document.getElementById('selectedFile').textContent = `Selected: ${file.name} (${formatFileSize(file.size)})`;
+                document.getElementById('selectedFile').classList.remove('hidden');
+                document.getElementById('uploadFileBtn').disabled = false;
+            }
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+
+        // Drag and drop handlers
+        const uploadArea = document.getElementById('fileUploadArea');
+        
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, () => {
+                uploadArea.classList.add('dragover');
+            }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, () => {
+                uploadArea.classList.remove('dragover');
+            }, false);
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const file = dt.files[0];
+            if (file) {
+                selectedFile = file;
+                document.getElementById('selectedFile').textContent = `Selected: ${file.name} (${formatFileSize(file.size)})`;
+                document.getElementById('selectedFile').classList.remove('hidden');
+                document.getElementById('uploadFileBtn').disabled = false;
+            }
+        });
+
+        // Upload file to GitHub via API
         async function uploadFile() {
-            const picker = document.getElementById('filePicker');
-            if (!picker.files[0]) return alert("Select a file first");
+            if (!selectedFile) {
+                alert('Please select a file first');
+                return;
+            }
+
+            if (API_URL === 'https://your-project.vercel.app/api') {
+                alert('⚠️ Backend not configured. Please deploy to Vercel first to enable file uploads.');
+                return;
+            }
+
+            const description = document.getElementById('newFileDesc').value.trim();
+            const category = document.getElementById('newFileCategory').value.trim();
 
             const formData = new FormData();
-            formData.append('file', picker.files[0]);
+            formData.append('file', selectedFile);
 
-            // 1. Upload the raw file
-            const uploadRes = await fetch(`${API_BASE}/files/upload`, { method: 'POST', body: formData });
-            const uploadData = await uploadRes.json();
+            const progressBar = document.getElementById('uploadProgressBar');
+            const progressContainer = document.getElementById('uploadProgress');
+            progressContainer.classList.remove('hidden');
+            progressBar.style.width = '30%';
 
-            // 2. Save metadata to files.json
-            await fetch(`${API_BASE}/files`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ name: uploadData.filename, url: uploadData.url })
-            });
+            try {
+                // Upload file to GitHub
+                const uploadResponse = await fetch(`${API_URL}/files/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
 
-            loadResources();
-            alert("Uploaded successfully!");
+                if (!uploadResponse.ok) {
+                    throw new Error('Failed to upload file to GitHub');
+                }
+
+                const uploadData = await uploadResponse.json();
+                progressBar.style.width = '60%';
+
+                // Add file metadata to files.json
+                const fileEntry = {
+                    name: selectedFile.name,
+                    url: uploadData.url,
+                    description: description || '',
+                    category: category || '',
+                    date: new Date().toISOString().split('T')[0],
+                    size: formatFileSize(selectedFile.size)
+                };
+
+                const addResponse = await fetch(`${API_URL}/files`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(fileEntry)
+                });
+
+                if (addResponse.ok) {
+                    progressBar.style.width = '100%';
+                    alert('File uploaded successfully!');
+                    
+                    // Reset form
+                    selectedFile = null;
+                    document.getElementById('fileInput').value = '';
+                    document.getElementById('selectedFile').classList.add('hidden');
+                    document.getElementById('newFileDesc').value = '';
+                    document.getElementById('newFileCategory').value = '';
+                    document.getElementById('uploadFileBtn').disabled = true;
+                    
+                    setTimeout(async () => {
+                        progressContainer.classList.add('hidden');
+                        progressBar.style.width = '0%';
+                        // Wait a moment for GitHub to process, then reload
+                        await new Promise(resolve => setTimeout(resolve, 1000));
+                        await loadFiles();
+                    }, 500);
+                } else {
+                    throw new Error('Failed to add file metadata');
+                }
+            } catch (error) {
+                progressContainer.classList.add('hidden');
+                progressBar.style.width = '0%';
+                alert('Error uploading file: ' + error.message);
+            }
         }
 
-        async function deleteResource(index) {
-            if (!confirm("Are you sure?")) return;
-            await fetch(`${API_BASE}/files/${index}`, { method: 'DELETE' });
-            loadResources();
+        // Add file via API (old method - kept for compatibility)
+        async function addFileToAPI() {
+            const name = document.getElementById('newFileName').value.trim();
+            const url = document.getElementById('newFileUrl').value.trim();
+            const description = document.getElementById('newFileDesc').value.trim();
+            const category = document.getElementById('newFileCategory').value.trim();
+
+            if (!name || !url) {
+                alert('Please fill in File Name and URL');
+                return;
+            }
+
+            // Check if in fallback mode
+            if (API_URL === 'https://your-project.vercel.app/api') {
+                alert('⚠️ Backend not configured. Please deploy to Vercel first to enable adding files.');
+                return;
+            }
+
+            const fileEntry = {
+                name: name,
+                url: url,
+                description: description || '',
+                category: category || '',
+                date: new Date().toISOString().split('T')[0]
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/files`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(fileEntry)
+                });
+
+                if (response.ok) {
+                    alert('File added successfully!');
+                    document.getElementById('newFileName').value = '';
+                    document.getElementById('newFileUrl').value = '';
+                    document.getElementById('newFileDesc').value = '';
+                    document.getElementById('newFileCategory').value = '';
+                    await loadFiles();
+                } else {
+                    const error = await response.json();
+                    alert('Failed to add file: ' + (error.error || 'Unknown error'));
+                }
+            } catch (error) {
+                alert('Error adding file: ' + error.message);
+            }
+        }
+
+        // Add link via API
+        async function addLinkToAPI() {
+            const name = document.getElementById('newLinkName').value.trim();
+            const url = document.getElementById('newLinkUrl').value.trim();
+            const description = document.getElementById('newLinkDesc').value.trim();
+            const category = document.getElementById('newLinkCategory').value.trim();
+
+            if (!name || !url) {
+                alert('Please fill in Link Name and URL');
+                return;
+            }
+
+            // Check if in fallback mode
+            if (API_URL === 'https://your-project.vercel.app/api') {
+                alert('⚠️ Backend not configured. Please deploy to Vercel first to enable adding links.');
+                return;
+            }
+
+            const linkEntry = {
+                name: name,
+                url: url,
+                description: description || '',
+                category: category || ''
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/links`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(linkEntry)
+                });
+
+                if (response.ok) {
+                    alert('Link added successfully!');
+                    document.getElementById('newLinkName').value = '';
+                    document.getElementById('newLinkUrl').value = '';
+                    document.getElementById('newLinkDesc').value = '';
+                    document.getElementById('newLinkCategory').value = '';
+                    
+                    // Wait for GitHub to process, then reload
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                    await loadLinks();
+                } else {
+                    const error = await response.json();
+                    alert('Failed to add link: ' + (error.error || 'Unknown error'));
+                }
+            } catch (error) {
+                alert('Error adding link: ' + error.message);
+            }
+        }
+
+        // Delete file via API
+        async function deleteFile(index) {
+            if (API_URL === 'https://your-project.vercel.app/api') {
+                alert('⚠️ Backend not configured. Deleting is disabled in read-only mode.');
+                return;
+            }
+
+            if (!confirm('Are you sure you want to delete this file?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/files/${index}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    alert('File deleted successfully!');
+                    // Wait for GitHub to process, then reload
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                    await loadFiles();
+                } else {
+                    const error = await response.json();
+                    alert('Failed to delete file: ' + (error.error || 'Unknown error'));
+                }
+            } catch (error) {
+                alert('Error deleting file: ' + error.message);
+            }
+        }
+
+        // Delete link via API
+        async function deleteLink(index) {
+            if (API_URL === 'https://your-project.vercel.app/api') {
+                alert('⚠️ Backend not configured. Deleting is disabled in read-only mode.');
+                return;
+            }
+
+            if (!confirm('Are you sure you want to delete this link?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/links/${index}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    alert('Link deleted successfully!');
+                    // Wait for GitHub to process, then reload
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                    await loadLinks();
+                } else {
+                    const error = await response.json();
+                    alert('Failed to delete link: ' + (error.error || 'Unknown error'));
+                }
+            } catch (error) {
+                alert('Error deleting link: ' + error.message);
+            }
+        }
+
+        // Download file function
+        async function downloadFile(url, filename) {
+            try {
+                // Fetch the file as a blob
+                const response = await fetch(url);
+                const blob = await response.blob();
+                
+                // Create a temporary download link
+                const downloadUrl = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = downloadUrl;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                
+                // Cleanup
+                window.URL.revokeObjectURL(downloadUrl);
+                document.body.removeChild(a);
+            } catch (error) {
+                alert('Error downloading file: ' + error.message);
+            }
         }
     </script>
 </body>
