@@ -2,39 +2,55 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FTC Team | Next Level</title>
+    <title>Pancake Annihilators 33528</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-
-    <div class="bg-visuals">
-        <div class="blob" style="top: 10%; left: 10%; background: #3b82f6;"></div>
-        <div class="blob" style="bottom: 10%; right: 10%; background: #8b5cf6; animation-delay: -5s;"></div>
-    </div>
+    <div id="bg-robot" style="position:fixed; top:0; left:0; width:100%; height:100%; background: url('robot.jpg') center/cover; opacity: 0.2; z-index:-1;"></div>
 
     <nav>
-        <div class="logo">TEAM_12345</div>
-        <div class="nav-links">
-            <a href="index.html">Home</a>
-            <a href="team.html">Team</a>
-            <a href="organization.html">Organization</a>
-            <a href="contact.html">Contact</a>
-        </div>
+        <div id="nav-bubble"></div>
+        <a href="index.html" class="nav-item active">Home</a>
+        <a href="team.html" class="nav-item">Our Team</a>
+        <a href="org.html" class="nav-item">Organization</a>
+        <a href="contact.html" class="nav-item">Contact Us</a>
     </nav>
 
-    <main style="display: flex; align-items: center; min-height: 80vh;">
-        <div class="hero-content">
-            <h1 data-text="BEYOND LIMITS">BEYOND<br><span style="color: var(--accent)">LIMITS.</span></h1>
-            <p style="font-size: 1.2rem; opacity: 0.6; margin-bottom: 30px; max-width: 600px;">
-                Merging advanced vision processing with precision mechanics to dominate the FTC field.
-            </p>
-            <div class="glass-card" style="display: inline-block; padding: 20px 40px;">
-                <p>🚀 <strong>Next Match:</strong> Regional Qualifiers - Jan 15th</p>
+    <div class="main-container">
+        <section class="glass-panel">
+            <h1 style="font-size: 4rem; font-weight: 800; letter-spacing: -2px;">ENGINEERING THE FUTURE,<br>ONE PANCAKE AT A TIME.</h1>
+            <button style="margin-top:20px; padding: 15px 30px; border-radius: 50px; background: none; border: 1px solid white; color: white; cursor: pointer;">MEET THE MACHINE</button>
+        </section>
+
+        <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 30px;">
+            <div class="glass-panel">
+                <h3>Our Vision</h3>
+                <p>To dominate the FTC field through modular design and robust autonomous algorithms.</p>
+            </div>
+            <div class="glass-panel">
+                <h3>Current Challenge: Into the Deep</h3>
+                <p>Developing high-speed mineral intake and submersible navigation systems.</p>
             </div>
         </div>
-    </main>
+    </div>
 
+    <footer>
+        <div>© 2025 Pancake Annihilators_33528</div>
+        <div class="socials">IG • TW • YT</div>
+    </footer>
+
+    <script>
+        // Sliding Bubble Logic
+        const activeLink = document.querySelector('.nav-item.active');
+        const bubble = document.getElementById('nav-bubble');
+        bubble.style.width = activeLink.offsetWidth + 'px';
+        bubble.style.left = activeLink.offsetLeft + 'px';
+
+        // Scroll Background Fade
+        window.addEventListener('scroll', () => {
+            const opacity = 0.2 - (window.scrollY / 1000);
+            document.getElementById('bg-robot').style.opacity = Math.max(opacity, 0);
+        });
+    </script>
 </body>
 </html>
