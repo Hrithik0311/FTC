@@ -753,7 +753,7 @@
                             </div>
                         </div>
                         <div class="item-actions">
-                            <a href="${fileUrl}" download class="small-btn" style="text-decoration: none; display: inline-block;">Download</a>
+                            <button class="small-btn" onclick="downloadFile('${fileUrl}', '${fileName}')">Download</button>
                             ${!isReadOnly ? `<button class="small-btn" style="background: #dc3545;" onclick="deleteFile(${index})">Delete</button>` : ''}
                         </div>
                     </li>
@@ -1095,6 +1095,29 @@
                 }
             } catch (error) {
                 alert('Error deleting link: ' + error.message);
+            }
+        }
+
+        // Download file function
+        async function downloadFile(url, filename) {
+            try {
+                // Fetch the file as a blob
+                const response = await fetch(url);
+                const blob = await response.blob();
+                
+                // Create a temporary download link
+                const downloadUrl = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = downloadUrl;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                
+                // Cleanup
+                window.URL.revokeObjectURL(downloadUrl);
+                document.body.removeChild(a);
+            } catch (error) {
+                alert('Error downloading file: ' + error.message);
             }
         }
     </script>
