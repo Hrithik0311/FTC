@@ -513,7 +513,9 @@
             listEl.innerHTML = '';
 
             try {
-                const response = await fetch(`${API_URL}/files`);
+                // Add cache buster to force fresh data
+                const cacheBuster = `?cb=${Date.now()}`;
+                const response = await fetch(`${API_URL}/files${cacheBuster}`);
                 if (!response.ok) {
                     throw new Error(`Failed to load files (${response.status})`);
                 }
@@ -542,7 +544,9 @@
             listEl.innerHTML = '';
 
             try {
-                const response = await fetch(`${API_URL}/links`);
+                // Add cache buster to force fresh data
+                const cacheBuster = `?cb=${Date.now()}`;
+                const response = await fetch(`${API_URL}/links${cacheBuster}`);
                 if (!response.ok) {
                     throw new Error(`Failed to load links (${response.status})`);
                 }
@@ -913,12 +917,13 @@
                     document.getElementById('newFileCategory').value = '';
                     document.getElementById('uploadFileBtn').disabled = true;
                     
-                    setTimeout(() => {
+                    setTimeout(async () => {
                         progressContainer.classList.add('hidden');
                         progressBar.style.width = '0%';
-                    }, 1000);
-                    
-                    await loadFiles();
+                        // Wait a moment for GitHub to process, then reload
+                        await new Promise(resolve => setTimeout(resolve, 1000));
+                        await loadFiles();
+                    }, 500);
                 } else {
                     throw new Error('Failed to add file metadata');
                 }
@@ -1020,6 +1025,9 @@
                     document.getElementById('newLinkUrl').value = '';
                     document.getElementById('newLinkDesc').value = '';
                     document.getElementById('newLinkCategory').value = '';
+                    
+                    // Wait for GitHub to process, then reload
+                    await new Promise(resolve => setTimeout(resolve, 1500));
                     await loadLinks();
                 } else {
                     const error = await response.json();
@@ -1048,6 +1056,8 @@
 
                 if (response.ok) {
                     alert('File deleted successfully!');
+                    // Wait for GitHub to process, then reload
+                    await new Promise(resolve => setTimeout(resolve, 1500));
                     await loadFiles();
                 } else {
                     const error = await response.json();
@@ -1076,6 +1086,8 @@
 
                 if (response.ok) {
                     alert('Link deleted successfully!');
+                    // Wait for GitHub to process, then reload
+                    await new Promise(resolve => setTimeout(resolve, 1500));
                     await loadLinks();
                 } else {
                     const error = await response.json();
