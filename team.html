@@ -4,47 +4,6 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="style.css">
     <title>Our Team</title>
-    <style>
-        .team-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 25px;
-        }
-
-        .member-card {
-            position: relative;
-            overflow: hidden;
-            height: 350px;
-            cursor: pointer;
-        }
-
-        .member-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-
-        .member-overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to top, rgba(15, 52, 96, 0.9), transparent);
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            padding: 20px;
-            opacity: 0; /* Hidden by default */
-            transition: opacity 0.3s ease;
-        }
-
-        .member-card:hover .member-overlay {
-            opacity: 1;
-        }
-
-        .member-card:hover .member-image {
-            transform: scale(1.1);
-        }
-    </style>
 </head>
 <body>
     <div class="blob blob-1"></div><div class="blob blob-2"></div>
@@ -54,18 +13,25 @@
         <a href="contact.html">Contact</a>
         <a href="index2.html">Team Only</a>
     </nav>
-
     <div class="container">
-        <h2 style="text-align: center; margin-bottom: 40px;">Meet the Team</h2>
+        <h2 style="text-align: center; margin-bottom: 50px;">The Engineering Crew</h2>
         <div class="team-grid">
-            <div class="glass-panel member-card" style="padding:0;">
-                <img src="https://via.placeholder.com/400x500/111/ccc?text=Photo" class="member-image">
+            <div class="member-card">
+                <img src="https://via.placeholder.com/400x500" class="member-image">
                 <div class="member-overlay">
-                    <h3 style="margin:0;">Member Name</h3>
-                    <p style="color: var(--neon-blue); margin: 5px 0 0;">Lead Programmer</p>
+                    <h3>Alex Johnson</h3>
+                    <p style="color: var(--neon-blue);">Lead Programmer</p>
                 </div>
             </div>
-            </div>
+            <div class="member-card"><img src="https://via.placeholder.com/400x500" class="member-image"><div class="member-overlay"><h3>Sarah Smith</h3><p style="color: var(--neon-blue);">Lead Build</p></div></div>
+            <div class="member-card"><img src="https://via.placeholder.com/400x500" class="member-image"><div class="member-overlay"><h3>Name</h3><p style="color: var(--neon-blue);">Role</p></div></div>
+            <div class="member-card"><img src="https://via.placeholder.com/400x500" class="member-image"><div class="member-overlay"><h3>Name</h3><p style="color: var(--neon-blue);">Role</p></div></div>
+            <div class="member-card"><img src="https://via.placeholder.com/400x500" class="member-image"><div class="member-overlay"><h3>Name</h3><p style="color: var(--neon-blue);">Role</p></div></div>
+            <div class="member-card"><img src="https://via.placeholder.com/400x500" class="member-image"><div class="member-overlay"><h3>Name</h3><p style="color: var(--neon-blue);">Role</p></div></div>
+            <div class="member-card"><img src="https://via.placeholder.com/400x500" class="member-image"><div class="member-overlay"><h3>Name</h3><p style="color: var(--neon-blue);">Role</p></div></div>
+            <div class="member-card"><img src="https://via.placeholder.com/400x500" class="member-image"><div class="member-overlay"><h3>Name</h3><p style="color: var(--neon-blue);">Role</p></div></div>
+            <div class="member-card"><img src="https://via.placeholder.com/400x500" class="member-image"><div class="member-overlay"><h3>Name</h3><p style="color: var(--neon-blue);">Role</p></div></div>
+        </div>
     </div>
 </body>
 </html>
