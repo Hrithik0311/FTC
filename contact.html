@@ -1,18 +1,15 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact | FTC Robotics</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        input, textarea {
-            width: 100%; background: rgba(0,0,0,0.3);
-            border: 1px solid var(--glass-border);
-            padding: 12px; color: white; border-radius: 10px;
-            margin-bottom: 15px;
-        }
-    </style>
 </head>
 <body>
-    <div class="blob blob-1"></div><div class="blob blob-2"></div>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    
     <nav>
         <a href="index.html">Home</a>
         <a href="team.html">Our Team</a>
@@ -20,16 +17,79 @@
         <a href="index2.html">Team Only</a>
     </nav>
 
-    <div class="container" style="max-width: 600px;">
-        <div class="glass-panel">
-            <h2>Contact Us</h2>
-            <form>
-                <input type="text" placeholder="Your Name">
-                <input type="email" placeholder="Your Email">
-                <textarea rows="5" placeholder="Your Message"></textarea>
-                <button type="submit" class="btn-gradient" style="width: 100%;">Send Message</button>
-            </form>
+    <div class="container">
+        <h2 style="text-align: center; margin-bottom: 50px;" class="gradient-text">Get In Touch</h2>
+        
+        <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px;">
+            <section class="glass-panel">
+                <h3>Send a Message</h3>
+                <form action="#">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <input type="text" placeholder="First Name" required>
+                        <input type="text" placeholder="Last Name" required>
+                    </div>
+                    <input type="email" placeholder="Your Email Address" required>
+                    <input type="text" placeholder="Subject (e.g. Sponsorship, Media)">
+                    <textarea rows="6" placeholder="How can we help your team or organization?"></textarea>
+                    
+                    <button type="submit" class="btn-gradient" style="width: 100%; border: none; font-size: 1rem;">
+                        Transmit Message
+                    </button>
+                </form>
+            </section>
+
+            <div style="display: flex; flex-direction: column; gap: 30px;">
+                <section class="glass-panel" style="padding: 30px;">
+                    <h3>Our Lab</h3>
+                    <p style="color: var(--text-dim); margin-bottom: 10px;">
+                        Innovation High School<br>
+                        123 Robotics Way<br>
+                        Engineering City, ST 90210
+                    </p>
+                    <p style="color: var(--neon-blue);">Email: team@robotics.com</p>
+                </section>
+
+                <section class="glass-panel" style="padding: 30px;">
+                    <h3>Follow the Build</h3>
+                    <div class="social-icons" style="margin-top: 0;">
+                        <a href="#" class="icon">IG</a>
+                        <a href="#" class="icon">YT</a>
+                        <a href="#" class="icon">GH</a>
+                    </div>
+                    <p style="color: var(--text-dim); font-size: 0.85rem; margin-top: 20px;">
+                        We post weekly build updates and autonomous testing videos.
+                    </p>
+                </section>
+            </div>
         </div>
     </div>
+
+    <footer class="pretty-footer">
+        <div class="footer-content">
+            <div>
+                <h2 class="gradient-text">FTC #XXXXX</h2>
+                <p>Decoding the future, one gear at a time.</p>
+            </div>
+            <div class="footer-links">
+                <h3>Menu</h3>
+                <ul style="list-style: none;">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="team.html">Our Team</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3>Social</h3>
+                <div class="social-icons">
+                    <a href="#" class="icon">IG</a>
+                    <a href="#" class="icon">YT</a>
+                    <a href="#" class="icon">GH</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 FTC Robotics. All systems operational.</p>
+        </div>
+    </footer>
 </body>
 </html>
