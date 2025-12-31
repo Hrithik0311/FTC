@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Portal | FTC Robotics</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .portal-container { max-width: 800px; margin: 40px auto; padding: 20px; }
+        .item-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .delete-btn { color: #ff4d4d; cursor: pointer; background: none; border: none; font-weight: bold; }
+        .hidden { display: none; }
+        input[type="text"] { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: white; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="team.html">Our Team</a>
+        <a href="index2.html" class="active">Team Portal</a>
+    </nav>
+
+    <div class="portal-container">
+        <div id="authSection" class="glass-panel text-center">
+            <h2 class="gradient-text">Member Login</h2>
+            <input type="text" id="username" placeholder="Enter Username">
+            <button class="btn-gradient" onclick="login()" style="border:none; width: 100%;">Access Portal</button>
+        </div>
+
+        <div id="dashboard" class="hidden">
+            <div class="glass-panel">
+                <h2 class="gradient-text">Resource Manager</h2>
+                <div id="fileList"></div>
+                
+                <hr style="border: 0; border-top: 1px solid var(--glass-border); margin: 20px 0;">
+                
+                <h3>Upload New Resource</h3>
+                <input type="file" id="filePicker" style="margin-bottom: 10px;">
+                <button class="btn-gradient" onclick="uploadFile()" style="border:none;">Upload to GitHub</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Since api/index.py is in the api folder, Vercel routes it to /api
+        const API_BASE = '/api'; 
+
+        async function login() {
+            const username = document.getElementById('username').value;
+            const res = await fetch(`${API_BASE}/auth/check`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({username})
+            });
+            if (res.ok) {
+                document.getElementById('authSection').classList.add('hidden');
+                document.getElementById('dashboard').classList.remove('hidden');
+                loadResources();
+            } else { alert("Access Denied"); }
+        }
+
+        async function loadResources() {
+            const res = await fetch(`${API_BASE}/files`);
+            const files = await res.json();
+            const container = document.getElementById('fileList');
+            container.innerHTML = files.map((f, i) => `
+                <div class="item-card">
+                    <span>📄 ${f.name}</span>
+                    <button class="delete-btn" onclick="deleteResource(${i})">Remove</button>
+                </div>
+            `).join('');
+        }
+
+        async function uploadFile() {
+            const picker = document.getElementById('filePicker');
+            if (!picker.files[0]) return alert("Select a file first");
+
+            const formData = new FormData();
+            formData.append('file', picker.files[0]);
+
+            // 1. Upload the raw file
+            const uploadRes = await fetch(`${API_BASE}/files/upload`, { method: 'POST', body: formData });
+            const uploadData = await uploadRes.json();
+
+            // 2. Save metadata to files.json
+            await fetch(`${API_BASE}/files`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ name: uploadData.filename, url: uploadData.url })
+            });
+
+            loadResources();
+            alert("Uploaded successfully!");
+        }
+
+        async function deleteResource(index) {
+            if (!confirm("Are you sure?")) return;
+            await fetch(`${API_BASE}/files/${index}`, { method: 'DELETE' });
+            loadResources();
+        }
+    </script>
+</body>
+</html>
