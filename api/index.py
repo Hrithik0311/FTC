@@ -4,6 +4,7 @@ import os
 import requests
 import base64
 import json
+import time
 
 app = Flask(__name__)
 CORS(app)
@@ -67,7 +68,9 @@ def check_auth():
 @app.route('/api/files', methods=['GET'])
 def get_files():
     """Get all files from files.json"""
-    url = f"https://raw.githubusercontent.com/{GITHUB_USER}/{GITHUB_REPO}/{GITHUB_BRANCH}/files.json"
+    # Add cache buster to bypass GitHub CDN cache
+    cache_buster = f"?cb={int(time.time() * 1000)}"
+    url = f"https://raw.githubusercontent.com/{GITHUB_USER}/{GITHUB_REPO}/{GITHUB_BRANCH}/files.json{cache_buster}"
     response = requests.get(url)
     if response.status_code == 200:
         return jsonify(response.json())
@@ -76,7 +79,9 @@ def get_files():
 @app.route('/api/links', methods=['GET'])
 def get_links():
     """Get all links from links.json"""
-    url = f"https://raw.githubusercontent.com/{GITHUB_USER}/{GITHUB_REPO}/{GITHUB_BRANCH}/links.json"
+    # Add cache buster to bypass GitHub CDN cache
+    cache_buster = f"?cb={int(time.time() * 1000)}"
+    url = f"https://raw.githubusercontent.com/{GITHUB_USER}/{GITHUB_REPO}/{GITHUB_BRANCH}/links.json{cache_buster}"
     response = requests.get(url)
     if response.status_code == 200:
         return jsonify(response.json())
