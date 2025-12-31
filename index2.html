@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Robotics Team Portal</title>
     <style>
-        :root {
+        /* :root {
             --glass-bg: rgba(255, 255, 255, 0.1);
             --glass-border: rgba(255, 255, 255, 0.2);
             --accent-color: #00d2ff;
             --secondary-accent: #9d50bb;
             --text-color: #ffffff;
-        }
+        } */
 
         * {
             margin: 0;
@@ -19,7 +19,7 @@
             box-sizing: border-box;
         }
 
-        body {
+        /* body {
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background: radial-gradient(circle at top right, #1e2a44, #0f172a);
             background-attachment: fixed;
@@ -28,7 +28,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-        }
+        } */
 
         /* Fixed Navigation Bar */
         .navbar {
@@ -177,18 +177,101 @@
         .info-box { background: rgba(0, 210, 255, 0.1); border-left: 4px solid var(--accent-color); padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; }
 
         .hidden { display: none; }
+       :root {
+    --glass: rgba(255, 255, 255, 0.05);
+    --glass-heavy: rgba(15, 23, 42, 0.85);
+    --accent: #00d2ff;
+    --border: rgba(255, 255, 255, 0.1);
+}
+
+body {
+    margin: 0;
+    background: #0f172a;
+    font-family: 'Inter', sans-serif;
+    color: white;
+    scroll-behavior: smooth;
+}
+
+/* THE NAV BAR */
+.navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 70px;
+    background: var(--glass-heavy);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10%;
+    z-index: 9999;
+}
+
+.nav-logo {
+    font-weight: 800;
+    font-size: 1.4rem;
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.nav-links {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+}
+
+.nav-item {
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.nav-item:hover {
+    color: var(--accent);
+}
+
+/* Special button for Team Only */
+.nav-team-btn {
+    background: white;
+    color: #0f172a !important;
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-weight: 700;
+}
+
+.nav-team-btn:hover {
+    background: var(--accent);
+    transform: translateY(-2px);
+}
+
+/* Content Sections */
+.page-section {
+    min-height: 100vh;
+    padding: 100px 10% 40px 10%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.hidden { display: none; }
     </style>
 </head>
 <body>
 
-    <nav class="navbar hidden" id="mainNav">
-        <div class="nav-brand">🤖 FTC PORTAL</div>
-        <div class="nav-actions">
-            <span>Welcome, <strong id="currentUserNav">User</strong></span>
-            <button class="btn refresh-btn" onclick="refreshData()" style="padding: 8px 15px;">🔄 Refresh</button>
-            <button class="btn logout-btn" onclick="logout()" style="padding: 8px 15px;">Logout</button>
-        </div>
-    </nav>
+<nav class="navbar">
+    <a href="#" class="nav-logo">🤖 FTC TEAM</a>
+    <div class="nav-links">
+        <a class="nav-item" onclick="showPage('home')">Home</a>
+        <a class="nav-item" onclick="showPage('team')">Our Team</a>
+        <a class="nav-item" onclick="showPage('contact')">Contact</a>
+        <a class="nav-item nav-team-btn" onclick="showPage('portal')">Team Only</a>
+    </div>
+</nav>
 
     <div class="container">
         <div id="loginScreen" class="glass-card login-screen">
@@ -262,6 +345,19 @@
         </div>
     </div>
    <script>
+       function showPage(pageId) {
+    // Hide all sections
+    document.getElementById('homePage').classList.add('hidden');
+    document.getElementById('teamPage').classList.add('hidden');
+    document.getElementById('contactPage').classList.add('hidden');
+    document.getElementById('portalPage').classList.add('hidden');
+
+    // Show the selected section
+    document.getElementById(pageId + 'Page').classList.remove('hidden');
+    
+    // Smooth scroll to top
+    window.scrollTo(0, 0);
+}
         // API Configuration - REPLACE WITH YOUR VERCEL URL AFTER DEPLOYMENT
         const API_URL = 'https://ftc-three.vercel.app/api';
         
