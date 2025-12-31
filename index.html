@@ -2,25 +2,39 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>FTC Team | Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FTC Team | Next Level</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
+
+    <div class="bg-visuals">
+        <div class="blob" style="top: 10%; left: 10%; background: #3b82f6;"></div>
+        <div class="blob" style="bottom: 10%; right: 10%; background: #8b5cf6; animation-delay: -5s;"></div>
+    </div>
+
     <nav>
-        <div class="logo">TEAM #12345</div>
+        <div class="logo">TEAM_12345</div>
         <div class="nav-links">
             <a href="index.html">Home</a>
-            <a href="team.html">Our Team</a>
-            <a href="organization.html">Our Organization</a>
-            <a href="contact.html">Contact Us</a>
+            <a href="team.html">Team</a>
+            <a href="organization.html">Organization</a>
+            <a href="contact.html">Contact</a>
         </div>
     </nav>
 
-    <main>
-        <section class="glass-card">
-            <h1>Innovation in Motion.</h1>
-            <p>Welcome to the official home of FTC Team #12345. We are a group of student engineers dedicated to robot design, outreach, and Gracious Professionalism.</p>
-        </section>
+    <main style="display: flex; align-items: center; min-height: 80vh;">
+        <div class="hero-content">
+            <h1 data-text="BEYOND LIMITS">BEYOND<br><span style="color: var(--accent)">LIMITS.</span></h1>
+            <p style="font-size: 1.2rem; opacity: 0.6; margin-bottom: 30px; max-width: 600px;">
+                Merging advanced vision processing with precision mechanics to dominate the FTC field.
+            </p>
+            <div class="glass-card" style="display: inline-block; padding: 20px 40px;">
+                <p>🚀 <strong>Next Match:</strong> Regional Qualifiers - Jan 15th</p>
+            </div>
+        </div>
     </main>
+
 </body>
 </html>
